@@ -11,7 +11,10 @@
     "cors": "^2.8.5",
     "dotenv": "^17.4.0",
     "express": "^4.21.2",
-    "mysql2": "^3.11.3"
+    "multer": "^2.1.1",
+    "mysql2": "^3.11.3",
+    "nodemailer": "^8.0.7",
+    "pdf-parse": "^2.4.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

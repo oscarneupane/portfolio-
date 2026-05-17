@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Document Manager</title>
+  <link rel="stylesheet" href="docs.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">📁</span>
+        <span>DocManager</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn" data-view="upload">Upload PDFs</button>
+        <button class="nav-btn" data-view="browse">Browse Files</button>
+        <button class="nav-btn" data-view="send">Send Document</button>
+      </nav>
+      <div class="dept-filter">
+        <p class="dept-title">Departments</p>
+        <button class="dept-btn active" data-dept="">All</button>
+        <button class="dept-btn" data-dept="HR">HR</button>
+        <button class="dept-btn" data-dept="Training">Training</button>
+        <button class="dept-btn" data-dept="Medical">Medical</button>
+        <button class="dept-btn" data-dept="Payslip">Payslip</button>
+        <button class="dept-btn" data-dept="PPE">PPE</button>
+        <button class="dept-btn" data-dept="LeaveApplication">Leave Application</button>
+        <button class="dept-btn" data-dept="Compensation">Compensation</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Dashboard View -->
+      <section id="view-dashboard" class="view active">
+        <h1>Document Overview</h1>
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card loading">Loading...</div>
+        </div>
+        <div class="section-header">
+          <h2>Recent Files</h2>
+          <input type="month" id="dashDateFilter" class="input" />
+        </div>
+        <div id="recentFiles" class="file-list"></div>
+      </section>
+
+      <!-- Upload View -->
+      <section id="view-upload" class="view">
+        <h1>Upload PDFs</h1>
+        <form id="uploadForm" class="card form-card">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Department *</label>
+              <select id="upDept" class="input" required>
+                <option value="">Select department…</option>
+                <option>HR</option>
+                <option>Training</option>
+                <option>Medical</option>
+                <option>Payslip</option>
+                <option>PPE</option>
+                <option>LeaveApplication</option>
+                <option>Compensation</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Surname *</label>
+              <input id="upSurname" class="input" placeholder="e.g. SMITH" required />
+            </div>
+            <div class="form-group">
+              <label>First Name *</label>
+              <input id="upFirstname" class="input" placeholder="e.g. John" required />
+            </div>
+            <div class="form-group">
+              <label>Document Date</label>
+              <input type="date" id="upDate" class="input" />
+            </div>
+          </div>
+          <div class="drop-zone" id="dropZone">
+            <span class="drop-icon">📄</span>
+            <p>Drag & drop PDFs here, or <label class="link" for="fileInput">browse</label></p>
+            <input type="file" id="fileInput" accept=".pdf" multiple hidden />
+            <div id="filePreview" class="file-preview"></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload Files</button>
+        </form>
+        <div id="uploadResults" class="results"></div>
+      </section>
+
+      <!-- Browse View -->
+      <section id="view-browse" class="view">
+        <h1>Browse Documents</h1>
+        <div class="search-bar">
+          <input id="searchSurname" class="input" placeholder="Filter by surname…" />
+          <input type="month" id="searchDate" class="input" />
+          <button class="btn btn-secondary" onclick="loadFiles()">Search</button>
+          <button class="btn btn-ghost" onclick="clearSearch()">Clear</button>
+        </div>
+        <div id="fileResults" class="file-list"></div>
+      </section>
+
+      <!-- Send View -->
+      <section id="view-send" class="view">
+        <h1>Send Document</h1>
+        <div class="card form-card">
+          <div class="form-group">
+            <label>Select File</label>
+            <select id="sendFileSelect" class="input">
+              <option value="">— select a file —</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Recipient Email *</label>
+              <input id="sendTo" class="input" type="email" placeholder="recipient@example.com" />
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <input id="sendSubject" class="input" placeholder="Optional subject…" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="sendMsg" class="input textarea" placeholder="Optional message…"></textarea>
+          </div>
+          <details class="smtp-details">
+            <summary>SMTP Settings (optional override)</summary>
+            <div class="form-row">
+              <div class="form-group"><label>Host</label><input id="smtpHost" class="input" placeholder="smtp.gmail.com" /></div>
+              <div class="form-group"><label>Port</label><input id="smtpPort" class="input" placeholder="587" /></div>
+              <div class="form-group"><label>User</label><input id="smtpUser" class="input" placeholder="user@gmail.com" /></div>
+              <div class="form-group"><label>Password</label><input id="smtpPass" class="input" type="password" /></div>
+            </div>
+          </details>
+          <button class="btn btn-primary" onclick="sendDoc()">Send Email</button>
+        </div>
+        <div id="sendResult" class="results"></div>
+      </section>
+    </main>
+
+    <!-- Scan Modal -->
+    <div id="scanModal" class="modal hidden">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="scanTitle">Document Scan</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div id="scanContent" class="scan-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="docs.js"></script>
+</body>
+</html>

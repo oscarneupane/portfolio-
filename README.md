@@ -1,5 +1,3 @@
-# portfolio-
-creating an portfolio for myself  to show my skills!!!!
 # 💼 Oscar Neupane — Portfolio Website
 
 Welcome to my personal portfolio website. This project showcases my skills, projects, and experience as an **IT Support Specialist & Full Stack Developer**.
